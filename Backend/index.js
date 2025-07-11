@@ -1,5 +1,4 @@
-//5oAG51tpf2ThbOmO
-//thaslimshaik800
+
 import express from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./lib/db.js";
@@ -13,11 +12,23 @@ dotenv.config();
 const app=express();
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true
-}))
 
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://rinlsteelplant.netlify.app"
+  ];
+
+  app.use(cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps, Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true
+  }));
 
 app.use("/api/auth",authRoutes)
 app.use("/api/equipment",equipmentRoutes)
